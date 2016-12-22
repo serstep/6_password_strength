@@ -6,10 +6,10 @@ def read_dict(filepath):
     with open(filepath) as dictionary :
         return dictionary.read()
 
-def dict_exist_rate(password, dictionary):
+def is_dict_word(password, dictionary):
     if dictionary is None:
-        return 0
-    return 2 if re.search(password, dictionary, flags=re.IGNORECASE) is None else 0
+        return False
+    return True if re.search(password, dictionary, flags=re.IGNORECASE) is None else False
 
 
 def is_password_valid(password):
@@ -23,7 +23,7 @@ def get_password_strength(password, dictionary):
     password_rate += 1 if not re.search(r"[\d]", password) is None else 0
     password_rate += 1 if not re.search(r"[@#$%^&*]", password) is None else 0
     password_rate += 2 if re.search(r"((19)|(20))\d\d", password) is None else 0
-    password_rate += dict_exist_rate(password, dictionary)
+    password_rate += 2 * int(is_dict_word(password, dictionary))
 
     return password_rate
 
@@ -31,7 +31,7 @@ def get_password_strength(password, dictionary):
 if __name__ == '__main__':
     try:
         dictionary = read_dict(sys.argv[1])
-    except:
+    except (FileNotFoundError, IndexError):
         dictionary = None
         print("Словарь не задан")
 
